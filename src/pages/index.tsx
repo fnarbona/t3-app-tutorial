@@ -1,9 +1,15 @@
+// next
 import Head from "next/head";
+import Image from "next/image";
+
+// components
+import LoadingPage from "~/components/Loading";
 import { SignInButton, useUser } from "@clerk/nextjs";
-import { RouterOutputs, api } from "~/utils/api";
+
+// utils
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import Image from "next/image";
+import { RouterOutputs, api } from "~/utils/api";
 
 dayjs.extend(relativeTime);
 
@@ -52,11 +58,26 @@ const CreatePostWizard = () => {
   );
 };
 
+const Feed = () => {
+  const { data, isLoading: postsLoading } = api.posts.getAll.useQuery();
+
+  if (postsLoading) return <LoadingPage />;
+
+  return (
+    <div className="w-full">
+      {data?.map((fullPost) => (
+        <PostView {...fullPost} key={fullPost.post.id} />
+      ))}
+    </div>
+  );
+};
 export default function Home() {
-  const user = useUser();
-  const { data, isLoading } = api.posts.getAll.useQuery();
-  if (isLoading) return <p>Loading...</p>;
-  if (!data) return <p>No posts found</p>;
+  const { isLoaded: userLoaded, isSignedIn } = useUser();
+
+  // fetch is cached, so we don't need to capture it for Feed component
+  api.posts.getAll.useQuery();
+
+  if (!userLoaded) return <div />;
 
   return (
     <>
@@ -68,14 +89,10 @@ export default function Home() {
       <main className="flex h-screen justify-center">
         <div className="w-full border-x border-slate-500 md:max-w-2xl">
           <div className="flex border-b border-slate-500 p-4">
-            {!user.isSignedIn && <SignInButton />}
-            {!!user.isSignedIn && <CreatePostWizard />}
+            {!isSignedIn && <SignInButton />}
+            {!!isSignedIn && <CreatePostWizard />}
           </div>
-          <div className="w-full">
-            {data?.map((fullPost) => (
-              <PostView {...fullPost} key={fullPost.post.id} />
-            ))}
-          </div>
+          <Feed />
         </div>
       </main>
     </>
