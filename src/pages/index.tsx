@@ -10,6 +10,7 @@ import { SignInButton, useUser } from "@clerk/nextjs";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { RouterOutputs, api } from "~/utils/api";
+import { useRef, useState } from "react";
 
 dayjs.extend(relativeTime);
 
@@ -38,9 +39,19 @@ const PostView = (props: PostWithUser) => {
 };
 
 const CreatePostWizard = () => {
+  const [post, setPost] = useState("");
+
   const { user } = useUser();
   if (!user) return null;
-  console.log(user);
+
+  const ctx = api.useContext();
+  const { mutate, isLoading: isPosting } = api.posts.create.useMutation({
+    onSuccess: () => {
+      setPost("");
+      ctx.posts.getAll.invalidate();
+    },
+  });
+
   return (
     <div className="flex w-full gap-4">
       <Image
@@ -53,7 +64,16 @@ const CreatePostWizard = () => {
       <input
         placeholder="Type some emojis!"
         className="grow rounded-md bg-transparent p-2 text-white outline-none"
+        value={post}
+        onChange={(e) => setPost(e.target.value)}
       />
+      <button
+        className="mb-2 mr-2 rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:hover:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700"
+        onClick={() => mutate({ content: post })}
+        disabled={isPosting}
+      >
+        Post
+      </button>
     </div>
   );
 };
@@ -71,6 +91,7 @@ const Feed = () => {
     </div>
   );
 };
+
 export default function Home() {
   const { isLoaded: userLoaded, isSignedIn } = useUser();
 
