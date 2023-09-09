@@ -1,6 +1,7 @@
 import { useState } from "react";
 // next
 import Head from "next/head";
+import Link from "next/link";
 import Image from "next/image";
 
 // components
@@ -13,12 +14,17 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { RouterOutputs, api } from "~/utils/api";
 import Progress from "~/components/Progress";
-
 dayjs.extend(relativeTime);
 
 type PostWithUser = RouterOutputs["posts"]["getAll"][number];
+
 const PostView = (props: PostWithUser) => {
   const { post, author } = props;
+
+  const timeSincePost = () => {
+    return dayjs(post?.createdAt).fromNow();
+  };
+
   return (
     <div key={post.id} className="flex gap-4 border-b-2 border-slate-500 p-4">
       <Image
@@ -30,9 +36,14 @@ const PostView = (props: PostWithUser) => {
       />
       <div>
         <div className="flex gap-1 text-slate-500">
-          <span>{`@${author?.username}`}</span>
+          <Link href={`/@${author?.username}`}>
+            <span>{`@${author?.username}`}</span>
+          </Link>
+
           <span>-</span>
-          <span>{`${dayjs(post?.createdAt).fromNow()}`}</span>
+          <Link href={`/post/${post?.id}`}>
+            <span>{timeSincePost()}</span>
+          </Link>
         </div>
         <span className="text-white">{post.content}</span>
       </div>
@@ -54,7 +65,7 @@ const CreatePostWizard = () => {
       void ctx.posts.getAll.invalidate();
     },
     onError: (e) => {
-      const errorMessage = e.data?.zodError?.fieldErrors?.content;
+      const errorMessage = e.data?.zodError?.fieldErrors.content;
       if (errorMessage && errorMessage[0]) {
         toast.error(errorMessage[0]);
       } else {

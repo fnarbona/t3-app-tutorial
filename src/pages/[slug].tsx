@@ -2,7 +2,7 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 
-const SinglePostPage: NextPage = () => {
+const ProfilePage: NextPage = () => {
   return (
     <>
       <Head>
@@ -11,10 +11,10 @@ const SinglePostPage: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex h-screen justify-center">
-        <div className="text-white">Single Post View</div>
+        <div className="text-white">Profile View</div>
       </main>
     </>
   );
 };
 
-export default SinglePostPage;
+export default ProfilePage;
