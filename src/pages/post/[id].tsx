@@ -4,7 +4,7 @@ import Head from "next/head";
 import Image from "next/image";
 
 // components
-import LoadingPage from "~/components/Loading";
+import LoadingPage, { LoadingSpinner } from "~/components/Loading";
 import { SignInButton, useUser } from "@clerk/nextjs";
 import toast from "react-hot-toast";
 
@@ -54,7 +54,7 @@ const CreatePostWizard = () => {
       void ctx.posts.getAll.invalidate();
     },
     onError: (e) => {
-      const errorMessage = e?.data?.zodError?.fieldErrors?.content;
+      const errorMessage = e.data?.zodError?.fieldErrors?.content;
       if (errorMessage && errorMessage[0]) {
         toast.error(errorMessage[0]);
       } else {
