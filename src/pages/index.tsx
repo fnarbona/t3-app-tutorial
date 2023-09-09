@@ -1,16 +1,18 @@
+import { useState } from "react";
 // next
 import Head from "next/head";
 import Image from "next/image";
 
 // components
-import LoadingPage from "~/components/Loading";
+import LoadingPage, { LoadingSpinner } from "~/components/Loading";
 import { SignInButton, useUser } from "@clerk/nextjs";
+import toast from "react-hot-toast";
 
 // utils
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { RouterOutputs, api } from "~/utils/api";
-import { useState } from "react";
+import Progress from "~/components/Progress";
 
 dayjs.extend(relativeTime);
 
@@ -40,6 +42,7 @@ const PostView = (props: PostWithUser) => {
 
 const CreatePostWizard = () => {
   const [post, setPost] = useState("");
+  const progress = Math.ceil((post.length / 280) * 100);
 
   const { user } = useUser();
   if (!user) return null;
@@ -49,6 +52,14 @@ const CreatePostWizard = () => {
     onSuccess: () => {
       setPost("");
       void ctx.posts.getAll.invalidate();
+    },
+    onError: (e) => {
+      const errorMessage = e.data?.zodError?.fieldErrors?.content;
+      if (errorMessage && errorMessage[0]) {
+        toast.error(errorMessage[0]);
+      } else {
+        toast.error("Failed to create post, please try again later.");
+      }
     },
   });
 
@@ -61,18 +72,21 @@ const CreatePostWizard = () => {
         height={48}
         alt="Profile image"
       />
-      <input
-        placeholder="Type some emojis!"
-        className="grow rounded-md bg-transparent p-2 text-white outline-none"
-        value={post}
-        onChange={(e) => setPost(e.target.value)}
-      />
+      <div className="flex grow rounded-md">
+        <input
+          placeholder="Type some emojis!"
+          className="grow bg-transparent  text-white outline-none"
+          value={post}
+          onChange={(e) => setPost(e.target.value)}
+        />
+        <Progress radius={18} stroke={2} progress={progress} />
+      </div>
       <button
-        className="mb-2 mr-2 rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:hover:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700"
+        className="mb-2 mr-2 min-w-[80px] rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:hover:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700"
         onClick={() => mutate({ content: post })}
         disabled={isPosting}
       >
-        Post
+        {!isPosting ? "Post" : <LoadingPage size={20} />}
       </button>
     </div>
   );
@@ -81,7 +95,7 @@ const CreatePostWizard = () => {
 const Feed = () => {
   const { data, isLoading: postsLoading } = api.posts.getAll.useQuery();
 
-  if (postsLoading) return <LoadingPage />;
+  if (postsLoading) return <LoadingPage size={60} />;
 
   return (
     <div className="w-full">
