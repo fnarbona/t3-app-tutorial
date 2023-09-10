@@ -3,11 +3,7 @@ import { clerkClient } from "@clerk/nextjs";
 import { User } from "@clerk/nextjs/dist/types/server";
 
 // trpc
-import {
-  createTRPCRouter,
-  privateProcedure,
-  publicProcedure,
-} from "~/server/api/trpc";
+import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { TRPCError } from "@trpc/server";
 
 // zod

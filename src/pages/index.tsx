@@ -1,7 +1,5 @@
 import { useState } from "react";
 // next
-import Head from "next/head";
-import Link from "next/link";
 import Image from "next/image";
 
 // components
@@ -12,45 +10,11 @@ import toast from "react-hot-toast";
 // utils
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { RouterOutputs, api } from "~/utils/api";
+import { api } from "~/utils/api";
 import Progress from "~/components/progress";
 import { PageLayout } from "~/components/Layout";
+import PostView from "~/components/postview";
 dayjs.extend(relativeTime);
-
-type PostWithUser = RouterOutputs["posts"]["getAll"][number];
-
-const PostView = (props: PostWithUser) => {
-  const { post, author } = props;
-
-  const timeSincePost = () => {
-    return dayjs(post?.createdAt).fromNow();
-  };
-
-  return (
-    <div key={post.id} className="flex gap-4 border-b-2 border-slate-400 p-4">
-      <Image
-        src={author.imageUrl}
-        className="rounded-full"
-        width={48}
-        height={48}
-        alt={`${author.username}'s profile picture`}
-      />
-      <div>
-        <div className="flex gap-1 text-slate-500">
-          <Link href={`/@${author?.username}`}>
-            <span>{`@${author?.username}`}</span>
-          </Link>
-
-          <span>-</span>
-          <Link href={`/post/${post?.id}`}>
-            <span>{timeSincePost()}</span>
-          </Link>
-        </div>
-        <span className="text-white">{post.content}</span>
-      </div>
-    </div>
-  );
-};
 
 const CreatePostWizard = () => {
   const [post, setPost] = useState("");
