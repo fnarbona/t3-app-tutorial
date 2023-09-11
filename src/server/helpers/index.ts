@@ -3,7 +3,7 @@ import { prisma } from "~/server/db";
 import { createServerSideHelpers } from "@trpc/react-query/server";
 import superjson from "superjson";
 
-import { User } from "@clerk/nextjs/dist/types/server";
+import { type User } from "@clerk/nextjs/dist/types/server";
 
 export const filterUserForClient = (user: User) => {
   return {
