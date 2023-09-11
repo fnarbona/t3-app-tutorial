@@ -1,15 +1,19 @@
 // next
 import { GetStaticProps, type NextPage } from "next";
 import Head from "next/head";
-import { api } from "~/utils/api";
-import { createServerSideHelpers } from "@trpc/react-query/server";
+import Image from "next/image";
 import superjson from "superjson";
+
+// components
+import PostView from "~/components/postview";
+import LoadingPage from "~/components/loading";
+import PageLayout from "~/components/layout";
+
+// utilities
+import { api } from "~/utils/api";
 import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
-import { PageLayout } from "~/components/Layout";
-import Image from "next/image";
-import LoadingPage from "~/components/Loading";
-import PostView from "~/components/postview";
+import { createServerSideHelpers } from "@trpc/react-query/server";
 
 const ProfileFeed = (props: { userId: string }) => {
   const { data, isLoading } = api.posts.getPostsByUserId.useQuery({

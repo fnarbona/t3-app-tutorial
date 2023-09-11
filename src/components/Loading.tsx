@@ -1,6 +1,6 @@
 import React from "react";
 
-export function LoadingSpinner(props: { size: number }) {
+function LoadingSpinner(props: { size: number }) {
   return (
     <div role="status">
       <svg
