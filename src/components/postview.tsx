@@ -18,7 +18,10 @@ const PostView = (props: PostWithUser) => {
   };
 
   return (
-    <div key={post.id} className="flex gap-4 border-b-2 border-slate-400 p-4">
+    <div
+      key={post.id}
+      className="flex gap-4 border-b-2 border-slate-500 p-4 py-6"
+    >
       <Image
         src={author.imageUrl}
         className="rounded-full"
@@ -27,17 +30,16 @@ const PostView = (props: PostWithUser) => {
         alt={`${author.username}'s profile picture`}
       />
       <div>
-        <div className="flex gap-1 text-slate-500">
+        <div className="flex gap-1">
           <Link href={`/@${author?.username}`}>
-            <span>{`@${author?.username}`}</span>
+            <span className="font-bold text-slate-300">{`@${author?.username}`}</span>
           </Link>
-
-          <span>-</span>
+          <span className="text-slate-500">-</span>
           <Link href={`/post/${post?.id}`}>
-            <span>{timeSincePost()}</span>
+            <span className="text-slate-500">{timeSincePost()}</span>
           </Link>
         </div>
-        <span className="text-white">{post.content}</span>
+        <span className="text-slate-300">{post.content}</span>
       </div>
     </div>
   );

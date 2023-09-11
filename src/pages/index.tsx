@@ -12,7 +12,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { api } from "~/utils/api";
 import Progress from "~/components/progress";
-import { PageLayout } from "~/components/Layout";
+import PageLayout from "~/components/layout";
 import PostView from "~/components/postview";
 dayjs.extend(relativeTime);
 
@@ -92,7 +92,7 @@ export default function Home() {
 
   return (
     <PageLayout>
-      <div className="flex border-b border-slate-400 p-4">
+      <div className="flex border-b border-slate-500 p-4">
         {!isSignedIn && <SignInButton />}
         {!!isSignedIn && <CreatePostWizard />}
       </div>
